@@ -15,10 +15,12 @@ build:
 
 requirements:
   host:
-    - python >=3
+    - python >=3.7
     - pip
+    - setuptools
+    - wheel
   run:
-    - python >=3
+    - python >=3.7
     - libpysal
     - numpy
     - scipy
@@ -26,11 +28,18 @@ requirements:
 test:
   imports:
     - spreg
+  requires:
+    - pip
+  commands:
+    - pip check
 
 about:
   home: https://github.com/pysal/spreg
   license: BSD-3-Clause
+  license_family: BSD
   license_file: {{ environ["RECIPE_DIR"] }}/LICENSE.txt
+  dev_url: https://github.com/pysal/spreg
+  doc_url: https://github.com/pysal/spreg/blob/master/README.md
   summary: PySAL Spatial Econometrics Package
 
 extra:
