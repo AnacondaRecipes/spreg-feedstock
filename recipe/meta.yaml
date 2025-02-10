@@ -1,27 +1,29 @@
+{% set name = "spreg" %}
 {% set version = "1.2.4" %}
 
 package:
-  name: spreg
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/s/spreg/spreg-{{ version }}.tar.gz
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   sha256: c2d1f243dedf53e3380c83fcd93bbd33339e20fb187486dc7ce7ebab7c21bc76
+  patches:
+    - patches/0001-add_numpy_import.patch
 
 build:
-  number: 0
-  noarch: python
-  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
+  number: 1
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   host:
-    - python >=3.7
+    - python
     - pip
     - setuptools
     - wheel
   run:
-    - python >=3.7
-    - libpysal >=4.0.0
+    - python
+    - libpysal >=4.10
     - numpy >=1.3
     - scipy >=0.11
     - pandas
@@ -38,10 +40,15 @@ about:
   home: https://github.com/pysal/spreg
   license: BSD-3-Clause
   license_family: BSD
-  license_file: {{ environ["RECIPE_DIR"] }}/LICENSE.txt
+  license_file: LICENSE.txt
+  summary: PySAL Spatial Econometrics Package
+  description: |
+    spreg, short for “spatial regression,” is a Python package to estimate
+    simultaneous autoregressive spatial regression models. These models are
+    useful when modeling processes where observations interact with one another.
+    This package is part of a refactoring of PySAL.
   dev_url: https://github.com/pysal/spreg
   doc_url: https://github.com/pysal/spreg/blob/master/README.md
-  summary: PySAL Spatial Econometrics Package
 
 extra:
   recipe-maintainers:
