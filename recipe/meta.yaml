@@ -42,10 +42,27 @@ requirements:
     - pandas
 
 {% set deselect_tests = "" %}
+# Skip: 
+#     TestGMCombo::test_model "Not equal to tolerance rtol=1e-05, atol=0"
+# This problem is solved for newer versions of scipy which cannot be
+# used with python 3.9 (see comment above).
 # tolerance error: Not equal to tolerance rtol=1e-05, atol=0
 {% set deselect_tests = " --deselect=spreg/tests/test_error_sp_sparse.py::TestGMCombo::test_model" %}   # [py<310 or (osx and x86_64)]
 {% set deselect_tests = " --deselect=spreg/tests/test_error_sp.py::TestGMCombo::test_model" %}          # [py<310 or (osx and x86_64)]
 {% set deselect_tests = " --deselect=spreg/tests/test_ml_error_regimes.py::TestMLError::test_model2" %} # [py<310 or (osx and x86_64)]
+
+# Skip tests eventually
+{% set tests_to_skip = "" %}
+# error on Windows: numpy.linalg.LinAlgError: Singular matrix
+# upstream developers disable the tests in:
+# https://github.com/pysal/spreg/pull/105/files
+{% set tests_to_skip = tests_to_skip + "test_Panel" %}  # [win]
+{% set tests_to_skip = tests_to_skip + " or test_Hausman" %}  # [win]
+
+{% set skip_tests_eventually = "" %}
+{% if tests_to_skip|length > 0 %}
+  {% set skip_tests_eventually = "-k \"not (" + tests_to_skip + ")\"" %}
+{% endif %}
 
 test:
   imports:
@@ -60,11 +77,8 @@ test:
     - pip check
     # check that pip gets the correct version 
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    # Skip: 
-    #     TestGMCombo::test_model "Not equal to tolerance rtol=1e-05, atol=0"
-    # This problem is solved for newer versions of scipy which cannot be
-    # used with python 3.9 (see comment above).
-    - pytest -vv  {{ deselect_tests }}  
+    - pytest -vv {{ deselect_tests }} {{ skip_tests_eventually }}
+
 about:
   home: https://github.com/pysal/spreg
   license: BSD-3-Clause
