@@ -40,6 +40,8 @@ requirements:
     # scipy <1.12a0 for py39: ImportError: cannot import name 'inf' from 'scipy'
     - scipy >=0.11,<1.12a0  # [py<310]
     - pandas
+  run_constrained:
+    - blas=*=openblas # [osx and x86_64]
 
 {% set deselect_tests = "" %}
 # Skip: 
@@ -51,18 +53,6 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_error_sp.py::TestGMCombo::test_model" %}          # [py<310 or (osx and x86_64)]
 {% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_ml_error_regimes.py::TestMLError::test_model2" %} # [py<310 or (osx and x86_64)]
 
-# Skip tests eventually
-{% set tests_to_skip = "" %}
-# error on Windows and osx-64: numpy.linalg.LinAlgError: Singular matrix
-# upstream developers disable the tests in:
-# https://github.com/pysal/spreg/pull/105/files
-{% set tests_to_skip = tests_to_skip + "test_Panel" %}  # [win or (osx and x86_64)]
-{% set tests_to_skip = tests_to_skip + " or test_Hausman" %}  # [win or (osx and x86_64)]
-
-{% set skip_tests_eventually = "" %}
-{% if tests_to_skip|length > 0 %}
-  {% set skip_tests_eventually = "-k \"not (" + tests_to_skip + ")\"" %}
-{% endif %}
 
 test:
   imports:
@@ -77,8 +67,11 @@ test:
     - pip check
     # check that pip gets the correct version 
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest -vv {{ deselect_tests }} {{ skip_tests_eventually }}
-
+    - pytest -vv {{ deselect_tests }}  # [not (win or (osx and x86_64))]
+    # error on Windows and osx-64: numpy.linalg.LinAlgError: Singular matrix
+    # upstream developers disable the tests in:
+    # https://github.com/pysal/spreg/pull/105/files
+    - pytest -vv {{ deselect_tests }} -k 'not (test_Panel or test_Hausman)'  # [win or (osx and x86_64)]
 about:
   home: https://github.com/pysal/spreg
   license: BSD-3-Clause
