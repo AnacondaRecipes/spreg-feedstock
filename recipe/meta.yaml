@@ -71,7 +71,8 @@ test:
     # error on Windows and osx-64: numpy.linalg.LinAlgError: Singular matrix
     # upstream developers disable the tests in:
     # https://github.com/pysal/spreg/pull/105/files
-    - pytest -vv {{ deselect_tests }} -k 'not (test_Panel or test_Hausman)'  # [win or (osx and x86_64)]
+    - pytest -vv {{ deselect_tests }} -k "not (test_Panel or test_Hausman)"  # [win or (osx and x86_64)]
+
 about:
   home: https://github.com/pysal/spreg
   license: BSD-3-Clause
