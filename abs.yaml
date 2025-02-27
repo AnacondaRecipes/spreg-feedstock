@@ -1,3 +1,3 @@
 channels:
-  - https://staging.continuum.io/prefect/fs/libpysal-feedstock/pr6/f1cefa4 # libpysal 4.10
-  - https://staging.continuum.io/prefect/fs/geopandas-feedstock/pr11/5723099 # geopandas 1.0.1
+  - https://staging.continuum.io/prefect/fs/libpysal-feedstock/pr6/6c51275
+  - https://staging.continuum.io/prefect/fs/geopandas-feedstock/pr11/0b5fc8c
