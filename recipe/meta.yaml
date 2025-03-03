@@ -33,14 +33,23 @@ requirements:
     - python
     # libpysal: for py39 the version 4.5.1 will be used
     #           while >=4.10 is available only for py>39
-    - libpysal
-    - libpysal >=4.10  # [py>39]
+    - libpysal  # [py<310]
+    - libpysal >=4.10  # [py>=310]
     - numpy >=1.3
-    - scipy >=0.11
+    - scipy >=0.11  # [py>=310]
     # scipy <1.12a0 for py39: ImportError: cannot import name 'inf' from 'scipy'
     - scipy >=0.11,<1.12a0  # [py<310]
     - pandas
   run_constrained:
+    - matplotlib-base >=1.5.1
+    - seaborn >=0.7.0
+    - geopandas >=0.2
+    - scikit-learn >=0.17.1
+    - bokeh >=0.11.1
+    - geojson >=1.3.2
+    - folium >=0.2.1
+    - mplleaflet >=0.0.5
+    - statsmodels >=0.6.1
     - blas=*=openblas # [osx and x86_64]
 
 {% set deselect_tests = "" %}

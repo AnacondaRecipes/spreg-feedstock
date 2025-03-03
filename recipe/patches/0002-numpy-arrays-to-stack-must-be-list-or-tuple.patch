@@ -3,6 +3,8 @@ From: Lorenzo Pirritano <lpirritano@anaconda.com>
 Date: Mon, 10 Feb 2025 16:05:37 +0100
 Subject: [PATCH 2/3] numpy arrays to stack must be list or tuple
 
+Fix for newer versions of numpy.
+
 ---
  spreg/diagnostics_sur.py |  2 +-
  spreg/sur_utils.py       | 10 +++++-----

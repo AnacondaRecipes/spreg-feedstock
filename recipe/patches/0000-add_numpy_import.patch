@@ -3,6 +3,9 @@ From: James Gaboardi <jgaboardi@gmail.com>
 Date: Tue, 24 Oct 2023 12:18:19 -0400
 Subject: [PATCH] adapt import to libpysal update
 
+Fix missing imports. Taken from a fix in version 1.4.2 at https://github.com/pysal/spreg/commits/v1.4.2
+in this commit: https://github.com/pysal/spreg/commit/ae8a9597d6841d4be8dd29a9c19362b02db9992d
+
 ---
  spreg/diagnostics.py      | 34 ++++++++++++++++++----------------
  spreg/diagnostics_tsls.py | 16 +++++++---------
