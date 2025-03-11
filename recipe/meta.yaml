@@ -1,47 +1,100 @@
+{% set name = "spreg" %}
 {% set version = "1.2.4" %}
 
 package:
-  name: spreg
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/s/spreg/spreg-{{ version }}.tar.gz
-  sha256: c2d1f243dedf53e3380c83fcd93bbd33339e20fb187486dc7ce7ebab7c21bc76
+  url: https://github.com/pysal/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: 2e6a46513d92820b020a3a96b002c4138364c0b8998386f3952dee9f2c6809db
+  patches:
+    - patches/0000-add_numpy_import.patch
+    - patches/0001-remove-relative-imports-in-tests.patch
+    - patches/0002-numpy-arrays-to-stack-must-be-list-or-tuple.patch
+    - patches/0003-flatten-minimize-input.patch
 
 build:
-  number: 0
-  noarch: python
-  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
+  number: 1
+  # skip s390x libpysal not available in 4.10
+  skip: True  # [py<37 or s390x]
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
+  build:
+    - patch       # [not win]
+    - m2-patch    # [win]
   host:
-    - python >=3.7
+    - python
     - pip
     - setuptools
     - wheel
   run:
-    - python >=3.7
-    - libpysal >=4.0.0
+    - python
+    # libpysal: for py39 the version 4.5.1 will be used
+    #           while >=4.10 is available only for py>39
+    - libpysal  # [py<310]
+    - libpysal >=4.10  # [py>=310]
     - numpy >=1.3
-    - scipy >=0.11
+    - scipy >=0.11  # [py>=310]
+    # scipy <1.12a0 for py39: ImportError: cannot import name 'inf' from 'scipy'
+    - scipy >=0.11,<1.12a0  # [py<310]
     - pandas
+  run_constrained:
+    - matplotlib-base >=1.5.1
+    - seaborn >=0.7.0
+    - geopandas >=0.2
+    - scikit-learn >=0.17.1
+    - bokeh >=0.11.1
+    - geojson >=1.3.2
+    - folium >=0.2.1
+    - mplleaflet >=0.0.5
+    - statsmodels >=0.6.1
+    - blas=*=openblas # [osx and x86_64]
+
+{% set deselect_tests = "" %}
+# Skip: 
+#     TestGMCombo::test_model "Not equal to tolerance rtol=1e-05, atol=0"
+# This problem is solved for newer versions of scipy which cannot be
+# used with python 3.9 (see comment above).
+# tolerance error: Not equal to tolerance rtol=1e-05, atol=0
+{% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_error_sp_sparse.py::TestGMCombo::test_model" %}   # [py<310 or (osx and x86_64)]
+{% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_error_sp.py::TestGMCombo::test_model" %}          # [py<310 or (osx and x86_64)]
+{% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_ml_error_regimes.py::TestMLError::test_model2" %} # [py<310 or (osx and x86_64)]
+
 
 test:
   imports:
     - spreg
   requires:
     - pip
+    - pytest
+  source_files:
+    # tests not in the wheel
+    - spreg/tests
   commands:
     - pip check
+    # check that pip gets the correct version 
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - pytest -vv {{ deselect_tests }}  # [not (win or (osx and x86_64))]
+    # error on Windows and osx-64: numpy.linalg.LinAlgError: Singular matrix
+    # upstream developers disable the tests in:
+    # https://github.com/pysal/spreg/pull/105/files
+    - pytest -vv {{ deselect_tests }} -k "not (test_Panel or test_Hausman)"  # [win or (osx and x86_64)]
 
 about:
   home: https://github.com/pysal/spreg
   license: BSD-3-Clause
   license_family: BSD
-  license_file: {{ environ["RECIPE_DIR"] }}/LICENSE.txt
+  license_file: LICENSE.txt
+  summary: PySAL Spatial Econometrics Package
+  description: |
+    spreg, short for “spatial regression,” is a Python package to estimate
+    simultaneous autoregressive spatial regression models. These models are
+    useful when modeling processes where observations interact with one another.
+    This package is part of a refactoring of PySAL.
   dev_url: https://github.com/pysal/spreg
   doc_url: https://github.com/pysal/spreg/blob/master/README.md
-  summary: PySAL Spatial Econometrics Package
 
 extra:
   recipe-maintainers:
