@@ -16,8 +16,7 @@ source:
 
 build:
   number: 0
-  # skip s390x libpysal not available in 4.10
-  skip: True  # [py<37 or s390x]
+  skip: True  # [py<37]
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
