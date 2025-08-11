@@ -1,5 +1,5 @@
 {% set name = "spreg" %}
-{% set version = "1.2.4" %}
+{% set version = "1.8.3" %}
 
 package:
   name: {{ name }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/pysal/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: 2e6a46513d92820b020a3a96b002c4138364c0b8998386f3952dee9f2c6809db
+  sha256: 3c6a6ffcd348d578cfea72e7e083fe6ff77085d4a779d16f91928ccbf08b5e52
   patches:
     - patches/0000-add_numpy_import.patch
     - patches/0001-remove-relative-imports-in-tests.patch
@@ -15,7 +15,7 @@ source:
     - patches/0003-flatten-minimize-input.patch
 
 build:
-  number: 1
+  number: 0
   # skip s390x libpysal not available in 4.10
   skip: True  # [py<37 or s390x]
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
