@@ -70,9 +70,9 @@ requirements:
 # This problem is solved for newer versions of scipy which cannot be
 # used with python 3.9 (see comment above).
 # tolerance error: Not equal to tolerance rtol=1e-05, atol=0
-{% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_error_sp_sparse.py::TestGMCombo::test_model" %}   # [py<310 or (osx and x86_64)]
-{% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_error_sp.py::TestGMCombo::test_model" %}          # [py<310 or (osx and x86_64)]
-{% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_ml_error_regimes.py::TestMLError::test_model2" %} # [py<310 or (osx and x86_64)]
+#{% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_error_sp_sparse.py::TestGMCombo::test_model" %}   # [py<310 or (osx and x86_64)]
+#{% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_error_sp.py::TestGMCombo::test_model" %}          # [py<310 or (osx and x86_64)]
+#{% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_ml_error_regimes.py::TestMLError::test_model2" %} # [py<310 or (osx and x86_64)]
 
 
 test:
