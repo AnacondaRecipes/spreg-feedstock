@@ -8,14 +8,6 @@ package:
 source:
   url: https://github.com/pysal/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
   sha256: 3c6a6ffcd348d578cfea72e7e083fe6ff77085d4a779d16f91928ccbf08b5e52
-  patches:
-  # libpysal doesn't have graphs in it's version available for py<310
-  #  - patches/0000_remove_libpysal_graph_usage.patch  # [py<310]
-#  patches:
-#    - patches/0000-add_numpy_import.patch
-#    - patches/0001-remove-relative-imports-in-tests.patch
-#    - patches/0002-numpy-arrays-to-stack-must-be-list-or-tuple.patch
-#    - patches/0003-flatten-minimize-input.patch
 
 build:
   number: 0
@@ -25,9 +17,6 @@ build:
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
-  build:
-#    - patch       # [not win]
-#    - m2-patch    # [win]
   host:
     - python
     - pip
@@ -46,36 +35,13 @@ requirements:
     - pandas
     # upstream pins to 4.0.0; increase min bound to 4.8.0 where graphs APIs (used
     # by this package) was introduced to libpysal
-    #- libpysal >=4.0.0  #  [py<310]
     - libpysal >=4.8.0  #  [py>=310]
     - scikit-learn >=0.22
-
-#    # libpysal: for py39 the version 4.5.1 will be used
-#    #           while >=4.10 is available only for py>39
-#    - libpysal  # [py<310]
-#    - libpysal >=4.10  # [py>=310]
-#    - numpy >=1.3
-#    - scipy >=0.11  # [py>=310]
-#    # scipy <1.12a0 for py39: ImportError: cannot import name 'inf' from 'scipy'
-#    - scipy >=0.11,<1.12a0  # [py<310]
-#    - pandas
-  run_constrained:
-#    - matplotlib-base >=1.5.1
-#    - seaborn >=0.7.0
-#    - geopandas >=0.2
-#    - scikit-learn >=0.17.1
-#    - bokeh >=0.11.1
-#    - geojson >=1.3.2
-#    - folium >=0.2.1
-#    - mplleaflet >=0.0.5
-#    - statsmodels >=0.6.1
-#    - blas=*=openblas # [osx and x86_64]
 
 {% set deselect_tests = "" %}
 
 # tolerance error: Not equal to tolerance rtol=1e-07, atol=0
 {% set deselect_tests = deselect_tests + " --deselect=spreg/tests/test_ml_error_regimes.py::TestMLError::test_model2" %} # [py<310 or (osx and x86_64)]
-
 
 test:
   imports:
