@@ -48,6 +48,9 @@ test:
     - pip
     - pytest
     - geopandas
+    # https://github.com/pysal/spreg/issues/191
+    # Error: TypeError: only 0-dimensional arrays can be converted to Python scalars.
+    - numpy <=2.3.5
 
 about:
   home: https://github.com/pysal/spreg
