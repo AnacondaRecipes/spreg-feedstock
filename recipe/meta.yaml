@@ -1,5 +1,5 @@
 {% set name = "spreg" %}
-{% set version = "1.8.5" %}
+{% set version = "1.9.1" %}
 
 package:
   name: {{ name }}
@@ -7,13 +7,13 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 9cc7ad977a4056ab8f888d6cd1b2ed9d0723537814ff566ae5940fa8eab827f3
+  sha256: 0633a13383700b79a197664db300bfc1b14c4747d770aa961c4f40c7a7577179
 
 build:
   number: 0
   # increase min python version to 310, where in which we are able to use
   # libpysal version >=4.8. More info in libpysal comment.
-  skip: true  # [py<310]
+  skip: true  # [py<312]
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
@@ -23,22 +23,20 @@ requirements:
     - setuptools >=61.0
     - setuptools_scm >=6.2
     - toml
-    - wheel
+    - setuptools-scm >=6.2
   run:
     - python
     # introduce upper bound:
     # spreg/tests/test_sputils.py::Test_Sparse_Utils::test_multiply - AssertionError: <Compressed Sparse Row sparse matrix of dtype 'float64'
-	  # with 7 stored elements and shape (20, 20)> is not an instance of <class 'scipy.sparse._csc.csc_matrix'>
-    - scipy >=0.11,<1.16  # [py<314]
-    - scipy >=0.11  # [py>=314]
-    # https://github.com/pysal/spreg/issues/191
-    # Error: TypeError: only 0-dimensional arrays can be converted to Python scalars.
-    - numpy >=1.23,<=2.3.5
-    - pandas
-    # upstream pins to 4.0.0; increase min bound to 4.8.0 where graphs APIs (used
-    # by this package) was introduced to libpysal
-    - libpysal >=4.8.0  #  [py>=310]
-    - scikit-learn >=0.22
+    - libpysal >=4.12
+    - numpy >=2.0.0
+    - pandas >=2.3
+    - scikit-learn >=1.5
+    - scipy >=1.14
+  run_constrained:
+    - geopandas >=1.1
+    - matplotlib-base >=3.10
+    - numba >=0.60
 
 test:
   imports:
@@ -71,3 +69,15 @@ extra:
     - ocefpaf
     - pedrovma
     - jGaboardi
+
+<conda_recipe_manager.types.SentinelType object at 0x7f97d5666270>:  # with 7 stored elements and shape (20, 20)> is not an instance of <class 'scipy.sparse._csc.csc_matrix'>
+  - scipy >=0.11,<1.16  # [py<314]
+  - scipy >=0.11  # [py>=314]
+  # https://github.com/pysal/spreg/issues/191
+  # Error: TypeError: only 0-dimensional arrays can be converted to Python scalars.
+  - numpy >=1.23,<=2.3.5
+  - pandas
+  # upstream pins to 4.0.0; increase min bound to 4.8.0 where graphs APIs (used
+  # by this package) was introduced to libpysal
+  - libpysal >=4.8.0  #  [py>=310]
+  - scikit-learn >=0.22
